@@ -1,3 +1,9 @@
+/*
+* Author: Kwek Sin En
+* Date: 25/01/2026
+* Description: Defines the DissolveController class for the VR game, which manages the dissolve effect on a skinned mesh renderer, allowing for a gradual dissolve effect by incrementally increasing the "_Dissolve_Amount" shader property over time. 
+* The class includes a coroutine to handle the dissolve effect and allows for customization of the dissolve rate.
+*/
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +22,10 @@ public class DissolveController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Gradually increases the dissolve amount on all skinned materials to create a dissolve visual effect.
+    /// </summary>
+    /// <returns>An enumerator for coroutine execution.</returns>
     public IEnumerator DissolveEffect()
     {
         if (skinnedMaterials.Length >0)

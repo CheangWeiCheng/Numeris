@@ -1,3 +1,9 @@
+/*
+* Author: Kwek Sin En
+* Date: 22/01/2026
+* Description: Defines the Staff class for the VR game, which manages the behavior of the staff weapon, allowing players to shoot projectiles towards a target point in the game world. 
+* The class also checks if the correct orb is attached before allowing the player to shoot.
+*/
 using UnityEngine;
 
 public class Staff : MonoBehaviour
@@ -8,7 +14,6 @@ public class Staff : MonoBehaviour
     public Transform activationPoint;
     public Vector3 destination;
     
-    // ADDED: Reference to the AnswerDetection script
     public AnswerDetection answerDetection;
     
     void Start()
@@ -19,9 +24,11 @@ public class Staff : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Fires a projectile towards the point the camera is aiming at if the correct orb is attached.
+    /// </summary>
     public void ShootProjectile()
     {
-        // ADDED: Check if correct orb is attached
         if (answerDetection == null || !answerDetection.IsCorrectOrbAttached)
         {
             Debug.Log("Cannot shoot - no correct orb attached!");
@@ -43,6 +50,10 @@ public class Staff : MonoBehaviour
         AudioManager.Instance.PlayLaserBeam();
     }
     
+    /// <summary>
+    /// Instantiates a projectile at the activation point and sets its velocity toward the destination at the specified
+    /// speed.
+    /// </summary>
     void InstantiateProjectile()
     {
         GameObject proj = Instantiate(projectile, activationPoint.position, Quaternion.identity);

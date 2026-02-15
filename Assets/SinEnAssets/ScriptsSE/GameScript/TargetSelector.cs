@@ -7,7 +7,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using System; // ADDED
+using System;
 
 public class TargetSelector : MonoBehaviour
 {
@@ -22,7 +22,7 @@ public class TargetSelector : MonoBehaviour
     private List<GameObject> availableTargets = new List<GameObject>();
     private int currentTargetIndex = -1;
 
-    // ADDED: Event for when target is cleared
+    
     public event Action OnTargetCleared;
     public event Action<GameObject> OnTargetLocked;
 
@@ -49,6 +49,10 @@ public class TargetSelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Cycles through available targets, updating the current target and triggering the OnTargetLocked event when a new
+    /// target is selected.
+    /// </summary>
     public void CycleTarget()
     {
         Debug.Log("CycleTarget called!"); 
@@ -69,7 +73,7 @@ public class TargetSelector : MonoBehaviour
             ClearTarget();
         }
 
-        GameObject previousTarget = CurrentTarget; // ADDED: Store previous target
+        GameObject previousTarget = CurrentTarget; 
 
         if (CurrentTarget == null)
         {
@@ -78,8 +82,6 @@ public class TargetSelector : MonoBehaviour
             if (CurrentTarget != null)
             {
                 currentTargetIndex = availableTargets.IndexOf(CurrentTarget);
-                
-                // ADDED: Trigger OnTargetLocked event
                 OnTargetLocked?.Invoke(CurrentTarget);
             }
         }
@@ -90,20 +92,21 @@ public class TargetSelector : MonoBehaviour
             
             if (availableTargets[currentTargetIndex] == CurrentTarget)
             {
-                // Do nothing if we cycled back to the same target
                 Debug.Log("Cycled back to the same target, no change.");
                 return;
             }
-
             CurrentTarget = availableTargets[currentTargetIndex];
-            
-            // ADDED: Trigger OnTargetLocked event (even when cycling between targets)
             OnTargetLocked?.Invoke(CurrentTarget);
         }
 
         Debug.Log($"Locked on to: {CurrentTarget?.name}");
     }
 
+    /// <summary>
+    /// Finds the target from the provided list that is closest to the center of the camera's view.
+    /// </summary>
+    /// <param name="targets">A list of potential target GameObjects to evaluate.</param>
+    /// <returns>The GameObject closest to the camera center, or null if none are found within the camera's view.</returns>
     private GameObject GetClosestTargetToCameraCenter(List<GameObject> targets)
     {
         GameObject bestTarget = null;
@@ -134,14 +137,14 @@ public class TargetSelector : MonoBehaviour
         return bestTarget;
     }
 
+    /// <summary>
+    /// Clears the current target, resets the target index, and triggers the target cleared event.
+    /// </summary>
     public void ClearTarget()
     {
         CurrentTarget = null;
         currentTargetIndex = -1;
-        
-        // ADDED: Trigger the event
         OnTargetCleared?.Invoke();
-        
         Debug.Log("Target cleared.");
     }
 }

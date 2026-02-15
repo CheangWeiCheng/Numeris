@@ -19,7 +19,9 @@ public class LockOnCamera : MonoBehaviour
     private Material originalMaterial;
     private Renderer currentTargetRenderer;
 
-
+    /// <summary>
+    /// Handles target highlighting and reticle visibility based on the current target selection.
+    /// </summary>
     void Update()
     {
         if (targetSelector.CurrentTarget != null)
@@ -52,7 +54,10 @@ public class LockOnCamera : MonoBehaviour
             RestoreOriginalMaterial();
         }
     }
-
+    
+    /// <summary>
+    /// Restores the original material to the current target renderer and clears references.
+    /// </summary>
     private void RestoreOriginalMaterial()
     {
         if (currentTargetRenderer != null && originalMaterial != null)
@@ -63,6 +68,10 @@ public class LockOnCamera : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Cleans up resources by restoring the original material and destroying the current reticle when the object is
+    /// destroyed.
+    /// </summary>
     void OnDestroy()
     {
         RestoreOriginalMaterial();

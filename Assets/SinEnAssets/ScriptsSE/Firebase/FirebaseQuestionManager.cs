@@ -1,3 +1,10 @@
+/*
+* Author: Kwek Sin En
+* Date: 10/02/2026
+* Description: Fetches custom teacher-created questions from Firebase
+* Falls back to procedurally generated questions if no custom questions available
+* Mixes Firebase and generated questions to avoid repetition
+*/
 using UnityEngine;
 using Firebase;
 using Firebase.Database;
@@ -5,13 +12,12 @@ using Firebase.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
-/// <summary>
-/// Fetches custom teacher-created questions from Firebase
-/// Falls back to procedurally generated questions if no custom questions available
-/// Mixes Firebase and generated questions to avoid repetition
-/// </summary>
 public class FirebaseQuestionManager : MonoBehaviour
 {
+    /// <summary>
+    /// Represents question data for Firebase, 
+    /// including the question text, correct answer, wrong answers, and creation timestamp.
+    /// </summary>
     [System.Serializable]
     public class FirebaseQuestionData
     {
@@ -81,6 +87,11 @@ public class FirebaseQuestionManager : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Returns the level key corresponding to the specified scene name.
+    /// </summary>
+    /// <param name="sceneName">The name of the scene to map to a level key.</param>
+    /// <returns>The level key associated with the given scene name, or "level1" if the scene name is not recognized.</returns>
     private string GetLevelKeyFromScene(string sceneName)
     {
         if (sceneName == level1SceneName) return "level1";
@@ -91,6 +102,11 @@ public class FirebaseQuestionManager : MonoBehaviour
         return "level1";
     }
 
+    /// <summary>
+    /// Loads custom questions for the specified level from Firebase and caches them for later use. Falls back to
+    /// generated questions if Firebase is not initialized or no custom questions are found.
+    /// </summary>
+    /// <param name="levelKey">The key identifying the level for which to load questions.</param>
     private void LoadQuestionsForLevel(string levelKey)
     {
         if (!isFirebaseInitialized)
@@ -207,6 +223,11 @@ public class FirebaseQuestionManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Retrieves a random unused question from the cached Firebase questions for the current level, resetting the used
+    /// pool if all questions have been used.
+    /// </summary>
+    /// <returns>A MathQuestionGenerator.QuestionData object representing the selected question.</returns>
     private MathQuestionGenerator.QuestionData GetFirebaseQuestion()
     {
         List<FirebaseQuestionData> questions = cachedQuestions[currentLevelKey];

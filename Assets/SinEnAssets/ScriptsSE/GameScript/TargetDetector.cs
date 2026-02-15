@@ -14,6 +14,11 @@ public class TargetDetector : MonoBehaviour
     [SerializeField] private Transform playerCameraTransform;
     [SerializeField] private float fieldOfViewAngle = 90f; // Angle in degrees
 
+    /// <summary>
+    /// Finds and returns a list of game objects within a specified detection radius and field of view angle from the
+    /// player's camera.
+    /// </summary>
+    /// <returns>A list of potential target game objects detected within range and field of view.</returns>
     public List<GameObject> FindPotentialTargets()
     {
         List<GameObject> potentialTargets = new List<GameObject>();
@@ -37,6 +42,9 @@ public class TargetDetector : MonoBehaviour
         return potentialTargets;
     }
 
+    /// <summary>
+    /// Draws a yellow wireframe sphere in the Scene view to visualize the detection radius when the object is selected.
+    /// </summary>
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;

@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+* Author: Kwek Sin En
+* Date: 22/01/2026
+* Description: Manages the player's inventory in the VR game, 
+* allowing for adding, using, and removing items.
+*/
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,8 +33,10 @@ public class InvenManager : MonoBehaviour
         }
     }
 
-    #region Item Management
-
+    /// <summary>
+    /// Adds an inventory item, increasing quantity if it already exists or adding it as new.
+    /// </summary>
+    /// <param name="itemToAdd">The inventory item to add.</param>
     public void AddItem(InventoryItem itemToAdd)
     {
         if (itemToAdd == null)
@@ -54,6 +62,10 @@ public class InvenManager : MonoBehaviour
         RefreshInventory();
     }
 
+    /// <summary>
+    /// Uses the specified inventory item by applying its effect and removing one unit from the inventory.
+    /// </summary>
+    /// <param name="itemId">The unique identifier of the inventory item to use.</param>
     public void UseItem(int itemId)
     {
         Debug.Log($"=== UseItem called with ID: {itemId} ===");
@@ -75,6 +87,12 @@ public class InvenManager : MonoBehaviour
         Debug.Log($"Used item: {existingItem.invenItemName} (ID: {itemId})");
     }
 
+    /// <summary>
+    /// Removes a specified quantity of an item from the inventory by its ID. If the quantity reaches zero or below, the
+    /// item is removed entirely.
+    /// </summary>
+    /// <param name="itemId">The unique identifier of the item to remove.</param>
+    /// <param name="quantity">The number of items to remove. Defaults to 1.</param>
     public void RemoveItem(int itemId, int quantity = 1)
     {
         InventoryItem existingItem = FindItemById(itemId);
@@ -97,11 +115,23 @@ public class InvenManager : MonoBehaviour
         RefreshInventory();
     }
 
+    /// <summary>
+    /// Searches the inventory item list for an item with the specified ID.
+    /// </summary>
+    /// <param name="itemId">The unique identifier of the inventory item to find.</param>
+    /// <returns>The inventory item with the matching ID, or null if not found.</returns>
     private InventoryItem FindItemById(int itemId)
     {
         return invenItemList.Find(item => item.invenId == itemId);
     }
 
+    /// <summary>
+    /// Creates a new InventoryItem instance at runtime by copying properties from a source item and setting its
+    /// quantity.
+    /// </summary>
+    /// <param name="sourceItem">The InventoryItem to copy properties from.</param>
+    /// <param name="quantity">The quantity to assign to the new InventoryItem.</param>
+    /// <returns>A new InventoryItem instance with copied properties and specified quantity.</returns>
     private InventoryItem CreateRuntimeItem(InventoryItem sourceItem, int quantity)
     {
         InventoryItem runtimeItem = ScriptableObject.CreateInstance<InventoryItem>();
@@ -114,10 +144,11 @@ public class InvenManager : MonoBehaviour
         return runtimeItem;
     }
 
-    #endregion
-
-    #region Item Effects
-
+    /// <summary>
+    /// Applies the effect of the specified inventory item by invoking the corresponding power-up action and playing the
+    /// use item sound.
+    /// </summary>
+    /// <param name="item">The inventory item whose effect is to be applied.</param>
     private void ApplyItemEffect(InventoryItem item)
     {
         if (PowerUpManager.Instance == null)
@@ -153,10 +184,10 @@ public class InvenManager : MonoBehaviour
         AudioManager.Instance.PlayUseItem();
     }
 
-    #endregion
-
-    #region UI Management
-
+    /// <summary>
+    /// Displays the current inventory items in the UI by clearing existing entries and instantiating UI elements for
+    /// each item in the inventory list.
+    /// </summary>
     public void DisplayInventory()
     {
         Debug.Log($"=== DisplayInventory - Total items: {invenItemList.Count} ===");
@@ -193,6 +224,10 @@ public class InvenManager : MonoBehaviour
         Debug.Log($"Successfully displayed {invenItemList.Count} inventory items");
     }
 
+    /// <summary>
+    /// Checks whether the required UI references are assigned and logs warnings or errors if they are missing.
+    /// </summary>
+    /// <returns>True if all required UI references are assigned; otherwise, false.</returns>
     private bool ValidateUIReferences()
     {
         if (invenItemContent == null)
@@ -208,6 +243,12 @@ public class InvenManager : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Configures the UI elements of an inventory item, including its name, icon, quantity, and use button
+    /// functionality.
+    /// </summary>
+    /// <param name="itemObj">The GameObject representing the inventory item UI element.</param>
+    /// <param name="invenItem">The InventoryItem containing data to display in the UI.</param>
     private void SetupInventoryItemUI(GameObject itemObj, InventoryItem invenItem)
     {
         if (itemObj == null || invenItem == null)
@@ -255,7 +296,13 @@ public class InvenManager : MonoBehaviour
         Debug.Log($"Button setup complete for {currentItemName} (ID: {currentItemId})");
     }
 
-    // Helper method to find child components
+    /// <summary>
+    /// Finds a child transform by name under the specified parent and returns the component of type T attached to it.
+    /// </summary>
+    /// <typeparam name="T">The type of Component to retrieve from the child transform.</typeparam>
+    /// <param name="parent">The parent transform to search under.</param>
+    /// <param name="childName">The name of the child transform to find.</param>
+    /// <returns>The component of type T attached to the found child transform, or null if not found.</returns>
     private T FindChildComponent<T>(Transform parent, string childName) where T : Component
     {
         Transform child = parent.Find(childName);
@@ -264,23 +311,29 @@ public class InvenManager : MonoBehaviour
             Debug.LogError($"{childName} not found in prefab! Check your prefab structure.");
             return null;
         }
-
         T component = child.GetComponent<T>();
         if (component == null)
         {
             Debug.LogError($"{typeof(T).Name} component not found on {childName}!");
             return null;
         }
-
         return component;
     }
 
+    /// <summary>
+    /// Sets the reference to the inventory UI content transform.
+    /// </summary>
+    /// <param name="contentTransform">The transform representing the inventory UI content.</param>
     public void SetInventoryUIReference(Transform contentTransform)
     {
         invenItemContent = contentTransform;
         Debug.Log("Inventory UI reference set");
     }
 
+    /// <summary>
+    /// Opens the inventory UI, loads inventory data from Firebase if the inventory panel is found, and plays the
+    /// inventory opening sound.
+    /// </summary>
     public void OpenInventoryUI()
     {
         Debug.Log("Opening inventory - Loading from Firebase...");
@@ -292,6 +345,11 @@ public class InvenManager : MonoBehaviour
         AudioManager.Instance.PlayOpenInventory();
     }
 
+    /// <summary>
+    /// Attempts to locate the InventoryPanel GameObject and its Content child in the scene, assigning the Content
+    /// transform to invenItemContent if found.
+    /// </summary>
+    /// <returns>True if both the InventoryPanel and its Content child are found; otherwise, false.</returns>
     private bool TryFindInventoryPanel()
     {
         GameObject inventoryPanel = GameObject.Find("InventoryPanel");
@@ -312,10 +370,9 @@ public class InvenManager : MonoBehaviour
         return true;
     }
 
-    #endregion
-
-    #region Firebase Integration
-
+    /// <summary>
+    /// Saves the current inventory to Firebase using the FirebaseInventoryManager.
+    /// </summary>
     public void SaveInventoryToFirebase()
     {
         Debug.Log("SaveInventoryToFirebase called");
@@ -331,6 +388,10 @@ public class InvenManager : MonoBehaviour
         );
     }
 
+    /// <summary>
+    /// Converts the inventory item list to a list of Inventory objects formatted for Firebase storage.
+    /// </summary>
+    /// <returns>A list of Inventory objects representing the inventory items in Firebase-compatible format.</returns>
     private List<Inventory> ConvertToFirebaseFormat()
     {
         List<Inventory> inventoryList = new List<Inventory>();
@@ -350,6 +411,9 @@ public class InvenManager : MonoBehaviour
         return inventoryList;
     }
 
+    /// <summary>
+    /// Initiates loading of the inventory data from Firebase, handling duplicate calls and errors.
+    /// </summary>
     public void LoadInventoryFromFirebase()
     {
         Debug.Log("=== LoadInventoryFromFirebase called ===");
@@ -370,6 +434,11 @@ public class InvenManager : MonoBehaviour
         );
     }
 
+    /// <summary>
+    /// Handles successful loading of inventory data from Firebase, validates and processes each item, updates the
+    /// inventory list, and refreshes the display.
+    /// </summary>
+    /// <param name="inventoryList">The list of inventory items retrieved from Firebase.</param>
     private void OnInventoryLoadSuccess(List<Inventory> inventoryList)
     {
         invenItemList.Clear();
@@ -388,12 +457,21 @@ public class InvenManager : MonoBehaviour
         isLoadingFromFirebase = false;
     }
 
+    /// <summary>
+    /// Handles inventory load errors by logging the error message and updating the loading state.
+    /// </summary>
+    /// <param name="error">The error message describing the inventory load failure.</param>
     private void OnInventoryLoadError(string error)
     {
         Debug.LogError($"Failed to load inventory: {error}");
         isLoadingFromFirebase = false;
     }
 
+    /// <summary>
+    /// Checks whether the provided inventory and its collectible details are not null.
+    /// </summary>
+    /// <param name="inventory">The inventory object to validate.</param>
+    /// <returns>True if the inventory and its collectible details are not null; otherwise, false.</returns>
     private bool ValidateFirebaseInventoryItem(Inventory inventory)
     {
         if (inventory == null || inventory.collectibleDetails == null)
@@ -404,6 +482,10 @@ public class InvenManager : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Loads an inventory item from Firebase data and adds it to the inventory item list if valid.
+    /// </summary>
+    /// <param name="inventory">The inventory object containing collectible details to load.</param>
     private void LoadInventoryItemFromFirebase(Inventory inventory)
     {
         Collectible collectible = inventory.collectibleDetails;
@@ -425,6 +507,11 @@ public class InvenManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Retrieves an InventoryItem asset from the Resources/InventoryItems folder by its unique ID.
+    /// </summary>
+    /// <param name="itemId">The unique identifier of the inventory item to retrieve.</param>
+    /// <returns>The InventoryItem asset matching the specified ID, or null if not found.</returns>
     private InventoryItem GetInventoryItemAsset(int itemId)
     {
         InventoryItem[] allItems = Resources.LoadAll<InventoryItem>("InventoryItems");
@@ -444,16 +531,18 @@ public class InvenManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Updates the displayed inventory and saves the current inventory state to Firebase.
+    /// </summary>
     private void RefreshInventory()
     {
         DisplayInventory();
         SaveInventoryToFirebase();
     }
 
-    #endregion
-
-    #region Debug
-
+    /// <summary>
+    /// Logs the current inventory contents and details of each item to the debug console.
+    /// </summary>
     public void DebugInventory()
     {
         Debug.Log("=== CURRENT INVENTORY ===");
@@ -477,5 +566,4 @@ public class InvenManager : MonoBehaviour
         }
         Debug.Log("========================");
     }
-    #endregion
 }

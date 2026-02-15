@@ -1,3 +1,8 @@
+/*
+* Author: Kwek Sin En
+* Date: 22/01/2026
+* Description: Defines the LoginUIManager class for the VR game, which manages the user interface for logging in with Firebase Authentication.
+*/
 using TMPro;
 using UnityEngine;
 using Firebase.Auth;
@@ -15,6 +20,11 @@ public class LoginUIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text errorText;
 
+    /// <summary>
+    /// Validates user input and attempts to log in with the provided email and password using Firebase authentication.
+    /// On successful login, updates the user's login status, loads player data and inventory, and transitions to the
+    /// main game UI.
+    /// </summary>
     public void Login()
     {
         // Obtain text from input fields
@@ -93,6 +103,11 @@ public class LoginUIManager : MonoBehaviour
                 }
             });
     }
+
+    /// <summary>
+    /// Displays the specified error message in the error text UI element.
+    /// </summary>
+    /// <param name="error">The error message to display.</param>
     private void ShowError(string error)
     {
         errorText.text = error;
