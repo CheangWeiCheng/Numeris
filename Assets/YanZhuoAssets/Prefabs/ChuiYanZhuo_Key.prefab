@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 8994995269049549972}
   - component: {fileID: 4460169296568751408}
   m_Layer: 0
-  m_Name: Key
+  m_Name: ChuiYanZhuo_Key
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
