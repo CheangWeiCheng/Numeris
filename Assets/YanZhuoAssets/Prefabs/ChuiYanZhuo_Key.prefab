@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 4318513284796764975}
   - component: {fileID: 8123553704196780831}
   - component: {fileID: 8994995269049549972}
-  - component: {fileID: 4460169296568751408}
   m_Layer: 0
   m_Name: ChuiYanZhuo_Key
   m_TagString: Untagged
@@ -123,7 +122,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5582228686716776182}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -215,8 +214,6 @@ MonoBehaviour:
   m_StartingHoverFilters: []
   m_StartingSelectFilters: []
   m_StartingInteractionStrengthFilters: []
-  m_AutoFindParentInteractableInHierarchy: 0
-  m_ParentInteractableObject: {fileID: 0}
   m_AttachTransform: {fileID: 0}
   m_SecondaryAttachTransform: {fileID: 0}
   m_UseDynamicAttach: 0
@@ -295,17 +292,3 @@ MonoBehaviour:
   m_MinimumScaleRatio: 0.25
   m_MaximumScaleRatio: 2
   m_ScaleMultiplier: 0.25
---- !u!114 &4460169296568751408
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5582228686716776182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d3da5d307807e744a48e20f56b4e01e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DestroyChestOnGrab
-  chestToDestroy: {fileID: 2545912721005875516, guid: 135dd3a27e0c93943b1121d3bf09c191, type: 3}
-  keyToDestroy: {fileID: 0}
