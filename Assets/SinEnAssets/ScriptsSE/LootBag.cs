@@ -1,3 +1,10 @@
+/*
+* Author: Kwek Sin En
+* Date: 28/01/2026
+* Description: Handles the logic for dropping loot items in the VR game. 
+* When an enemy is defeated, this script determines which items to drop based on their drop chances and 
+* instantiates them in the world with physics applied for a natural drop effect.
+*/
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -10,6 +17,9 @@ public class LootBag : MonoBehaviour
     public float dropHeight = 1f;
     public float spreadRadius = 1f;
 
+    /// <summary>
+    /// Drops a loot item at a position above the current object if an item is available.
+    /// </summary>
     public void DropLoot()
     {
         InventoryItem droppedItem = GetDroppedItem();
@@ -19,7 +29,11 @@ public class LootBag : MonoBehaviour
             InstantiateLoot(droppedItem, dropPosition);
         }
     }
-
+    
+    /// <summary>
+    /// Selects and returns a random item from the loot list based on each item's drop chance.
+    /// </summary>
+    /// <returns>The dropped InventoryItem if any item passes the drop chance check; otherwise, null.</returns>
     InventoryItem GetDroppedItem()
     {
         // Roll a random number for each item
@@ -45,6 +59,11 @@ public class LootBag : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Spawns a loot item in the world at the specified position with random spread and initializes its properties.
+    /// </summary>
+    /// <param name="item">The inventory item to instantiate as loot.</param>
+    /// <param name="spawnPosition">The base position where the loot should be spawned.</param>
     void InstantiateLoot(InventoryItem item, Vector3 spawnPosition)
     {
         GameObject lootPrefab = item.lootPrefab3D;

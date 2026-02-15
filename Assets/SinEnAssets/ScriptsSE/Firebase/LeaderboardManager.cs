@@ -1,3 +1,8 @@
+/*
+* Author: Kwek Sin En
+* Date: 28/01/2026
+* Description: Manages the leaderboard UI for the VR game, fetching player data from Firebase and displaying it in a scrollable list.
+*/
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,17 +17,19 @@ public class LeaderboardManager : MonoBehaviour
     [Header("Settings")]
     public int displayCount = 10;
 
+    /// <summary>
+    /// Opens the leaderboard by initializing UI references and refreshing the displayed player data.
+    /// </summary>
     public void OpenLeaderboard()
     {
         Debug.Log("=== Opening Leaderboard ===");
-        
-        // Find UI references in the scene
         FindUIReferences();
-        
-        // Fetch and display players
         RefreshLeaderboard();
     }
 
+    /// <summary>
+    /// Searches the scene for the leaderboard UI elements and assigns the leaderboard container reference.
+    /// </summary>
     private void FindUIReferences()
     {
         Debug.Log("Finding leaderboard UI references...");
@@ -35,10 +42,7 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
-        // Try to find the container - adjust this path to match YOUR hierarchy
-        // Common paths: "Scroll View/Viewport/Content" or "Content" or "LeaderboardContainer"
-        
-        // Method 1: Direct child search
+        // Method 1: Direct child
         Transform content = leaderboardCanvas.transform.Find("LeaderboardContent");
         if (content != null)
         {
@@ -47,7 +51,7 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
-        // Method 2: Search through ScrollView
+        // Method 2: Nested under ScrollView/Viewport
         Transform scrollView = leaderboardCanvas.transform.Find("Leaderboard");
         if (scrollView != null)
         {
@@ -75,23 +79,28 @@ public class LeaderboardManager : MonoBehaviour
                 return;
             }
         }
-
         Debug.LogError("Could not find leaderboard container! Check your LeaderboardCanvas hierarchy.");
     }
 
+    /// <summary>
+    /// Refreshes the leaderboard by fetching all player data from the FirebaseManager.
+    /// </summary>
     public void RefreshLeaderboard()
     {
         Debug.Log("Refreshing leaderboard...");
-        
         if (FirebaseManager.Instance == null)
         {
             Debug.LogError("FirebaseManager.Instance is null!");
             return;
         }
-
         FirebaseManager.Instance.FetchAllPlayers(OnPlayersLoadedDictionary, OnError);
     }
 
+    /// <summary>
+    /// Handles a loaded dictionary of players by converting it to a list, logging the count, and invoking the player
+    /// loaded handler.
+    /// </summary>
+    /// <param name="playerDict">A dictionary mapping player IDs to Player objects.</param>
     private void OnPlayersLoadedDictionary(Dictionary<string, Player> playerDict)
     {
         List<Player> players = playerDict?.Values.ToList() ?? new List<Player>();
@@ -99,6 +108,12 @@ public class LeaderboardManager : MonoBehaviour
         OnPlayersLoaded(players);
     }
 
+    /// <summary>
+    /// Populates the leaderboard UI with the top players sorted by coin count.
+    /// </summary>
+    /// <remarks>Ensures required UI references are set and not persistent before updating the leaderboard
+    /// entries.</remarks>
+    /// <param name="players">The list of players to display on the leaderboard.</param>
     private void OnPlayersLoaded(List<Player> players)
     {
         Debug.Log("=== OnPlayersLoaded called ===");
@@ -115,7 +130,6 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
-        // CRITICAL: Check if parent is persistent (DontDestroyOnLoad)
         if (IsPersistent(leaderboardContainer.gameObject))
         {
             Debug.LogError("leaderboardContainer is persistent! Cannot instantiate with persistent parent. Make sure LeaderboardCanvas is NOT DontDestroyOnLoad.");
@@ -141,13 +155,8 @@ public class LeaderboardManager : MonoBehaviour
         // Spawn and populate each entry
         for (int i = 0; i < sorted.Count; i++)
         {
-            // FIXED: Instantiate without parent first
             GameObject entry = Instantiate(leaderboardEntryPrefab);
-            
-            // Then set parent
             entry.transform.SetParent(leaderboardContainer, false);
-            
-            // Setup the entry
             LeaderboardEntry leaderboardEntry = entry.GetComponent<LeaderboardEntry>();
             if (leaderboardEntry != null)
             {
@@ -159,16 +168,23 @@ public class LeaderboardManager : MonoBehaviour
                 Debug.LogError("LeaderboardEntry component not found on prefab!");
             }
         }
-
         Debug.Log("Leaderboard displayed successfully");
     }
 
+    /// <summary>
+    /// Logs an error message when leaderboard fetching fails.
+    /// </summary>
+    /// <param name="error">The error message describing the failure.</param>
     private void OnError(string error)
     {
         Debug.LogError($"Leaderboard fetch failed: {error}");
     }
 
-    // Helper method to check if GameObject is persistent
+    /// <summary>
+    /// Determines whether the specified GameObject is persistent across scenes or not saved.
+    /// </summary>
+    /// <param name="obj">The GameObject to check for persistence.</param>
+    /// <returns>True if the GameObject is persistent or marked with DontSave; otherwise, false.</returns>
     private bool IsPersistent(GameObject obj)
     {
         return obj.scene.name == null || obj.hideFlags == HideFlags.DontSave;

@@ -1,9 +1,10 @@
+/*
+* Author: Kwek Sin En
+* Date: 10/02/2026
+* Description: Manages background music and sound effects for VR game.
+*/
 using UnityEngine;
 
-/// <summary>
-/// Manages background music and sound effects for VR game.
-/// Persists across scene changes to maintain continuous music playback.
-/// </summary>
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
@@ -45,7 +46,9 @@ public class AudioManager : MonoBehaviour
     {
         PlayBackgroundMusic();
     }
-
+    /// <summary>
+    /// Initializes and configures the music and sound effect audio sources for the game object.
+    /// </summary>
     private void InitializeAudioSources()
     {
         // Create audio sources if not assigned
